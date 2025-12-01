@@ -3,8 +3,12 @@ name: Shield Pipeline
 on:
     push:
         branches: [ "main" ]
+        paths:
+          - '1.-The_Shield_Pipeline/**'
     pull_request:
         branches: [ "main" ]
+        paths:
+          - '1.-The_Shield_Pipeline/**'
 
 jobs:
     build-and-secure:
@@ -17,7 +21,7 @@ jobs:
 
             # 2 - Build Docker File
             - name: Build Docker Image
-              run: docker build -t my-app:${{ github.sha }} .
+              run: docker build -t my-app:${{ github.sha }} ./1.-The_Shield_Pipeline
 
             # 3 - Security Scan with TRIVY (CVE's)
             - name: Run Trivy Vulnerability Scanner
@@ -25,8 +29,6 @@ jobs:
               with:
                 image-ref: 'my-app:${{ github.sha }}'
                 format: 'table'
-
-                # if found CRITIC vulnerabilities, fail the pipeline (exit code 1)
                 exit-code: '1'
                 ignore-unfixed: true
                 vuln-type: 'os,library'
